@@ -1,11 +1,32 @@
 #include "iostream"
 #include "user/user.cpp"
-void menu() {
-    cout << "----------------------------------" << endl;
-    cout << "Add new record: 1" << endl;
-    cout << "View records today: 2" << endl;
-    cout << "View money sources: 3" << endl;
-    cout << "----------------------------------" << endl;
+
+int menu();
+string format_username(string);
+void sign_up(User);
+void login(User);
+void call_to_method(int);
+void add_new_record();
+void view_today_records();
+void manage_money_sources();
+void log_out();
+void manage_categories();
+string format_username(string);
+
+
+int menu() {
+    int sl;
+    cout << "|--------------------------------------|" << endl;
+    cout << "|           spending records           |" << endl;
+    cout << "|--------------------------------------|" << endl;
+    cout << "|        1: Add new record             |" << endl;
+    cout << "|        2: View today records         |" << endl;
+    cout << "|        3: Manage sources             |" << endl;
+    cout << "|        4: Log out                    |" << endl;
+    cout << "|        5: Manage categories          |" << endl;
+    cout << "|--------------------------------------|" << endl;
+    cin >> sl;
+    return sl;
 }
 
 // Remove whitespace from both ends; convert whitespace to '-';
@@ -22,7 +43,7 @@ string format_username(string usr) {
 
     return usr;
 }
-void signUp(User *u) {
+void sign_up(User *u) {
     string usr, passwd, eml;
 
     cout << "Enter username: " << endl;
@@ -35,11 +56,11 @@ void signUp(User *u) {
     getline(cin, passwd);
 
     // Create user with submitted info; save to database;
-    u->update_attrs(-1, format_username(usr), eml, passwd);
+    u->updateAttrs(-1, format_username(usr), eml, passwd);
     u->signUp();
 }
 
-void login(User *u) {
+void log_in(User *u) {
     string u_e, passwd;
 
     cout << "Enter username or email: " << endl;
@@ -48,28 +69,44 @@ void login(User *u) {
     cout << "Enter password: " << endl;
     getline(cin, passwd);
 
-    u->update_attrs(-1, u_e, u_e, passwd);
-    u->login();
+    u->updateAttrs(-1, u_e, u_e, passwd);
+    u->logIn();
 }
-
+void log_out(User *u) {
+    u->logOut();
+}
+void call_to_method(int option, User *u) {
+    switch(option) {
+        case 4:
+            u->logOut();
+            break;
+    }
+}
 int main() {
     int start;
-    cout << "------------------------" << endl;
-    cout << "Login : 1" << endl;
-    cout << "Sign up: 2" << endl;
-    cout << "------------------------" << endl;
+    cout << "|--------------------------|" << endl;
+    cout << "|      spending records    |" << endl;
+    cout << "|--------------------------|" << endl;
+    cout << "|         1: Login         |" << endl;
+    cout << "|         2: Sign Up       |" << endl;
+    cout << "|--------------------------|" << endl;
     cin >> start; cin.ignore(1);
-
     User guest;
+    
     switch(start) {
         case 1:
-            login(&guest);
+            log_in(&guest);
             break;
         case 2:
-            signUp(&guest);
+            sign_up(&guest);
+            break;
+        default:
+            cout << "Invalid selected option!" << endl;
             break;
     }
 
-    guest.printInfo();
-    // cout << format_username(" thai ngo ") << endl;
+    while (guest.isLoggedIn()) {
+        int option = menu();
+        call_to_method(option, &guest);
+    }
 }

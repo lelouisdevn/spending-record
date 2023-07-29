@@ -1,45 +1,75 @@
 #include "iostream"
 #include "user/user.cpp"
+void menu() {
+    cout << "----------------------------------" << endl;
+    cout << "Add new record: 1" << endl;
+    cout << "View records today: 2" << endl;
+    cout << "View money sources: 3" << endl;
+    cout << "----------------------------------" << endl;
+}
 
-void signUp() {
-    string username, password, email;
+// Remove whitespace from both ends; convert whitespace to '-';
+string format_username(string usr) {
+    if (usr[0] == ' ') 
+        usr = usr.substr(1);
+
+    if (usr[usr.length()-1] == ' ')
+        usr = usr.substr(0, usr.length()-1);
+    
+    for (int i=0; i<usr.length(); i++)
+        if (usr[i] == ' ')
+            usr[i] = '-';
+
+    return usr;
+}
+void signUp(User *u) {
+    string usr, passwd, eml;
 
     cout << "Enter username: " << endl;
-    getline(cin, username);
+    getline(cin, usr);
 
     cout << "Enter email: " << endl;
-    getline(cin, email);
+    getline(cin, eml);
 
     cout << "Enter password: " << endl;
-    getline(cin, password);
+    getline(cin, passwd);
 
     // Create user with submitted info; save to database;
-    User new_user(username, email, password);
-    new_user.signUp();
+    u->update_attrs(-1, format_username(usr), eml, passwd);
+    u->signUp();
 }
 
-void login() {
+void login(User *u) {
+    string u_e, passwd;
 
-}
+    cout << "Enter username or email: " << endl;
+    getline(cin, u_e);
 
-void menu() {
+    cout << "Enter password: " << endl;
+    getline(cin, passwd);
 
+    u->update_attrs(-1, u_e, u_e, passwd);
+    u->login();
 }
 
 int main() {
     int start;
     cout << "------------------------" << endl;
-    cout << "LOGIN : 1" << endl;
-    cout << "SIGN UP: 2" << endl;
+    cout << "Login : 1" << endl;
+    cout << "Sign up: 2" << endl;
     cout << "------------------------" << endl;
     cin >> start; cin.ignore(1);
 
+    User guest;
     switch(start) {
         case 1:
-            login();
+            login(&guest);
             break;
         case 2:
-            signUp();
+            signUp(&guest);
             break;
     }
+
+    guest.printInfo();
+    // cout << format_username(" thai ngo ") << endl;
 }

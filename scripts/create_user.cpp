@@ -18,15 +18,15 @@ int main() {
         stmt = con->createStatement();
         stmt->execute("DROP TABLE IF EXISTS user");
         const string create_user_query = "CREATE TABLE user(userId INT PRIMARY KEY AUTO_INCREMENT, username VARCHAR(20),"
-                                        "password VARCHAR(20), email VARCHAR(40), signedUpAt VARCHAR(30), isVerified INT)";
+                                        "password VARCHAR(20), email VARCHAR(40), signedUpAt VARCHAR(30))";
         stmt->execute(create_user_query);
 
         string insert_user_info = "INSERT INTO user (username, password, email, signedUpAt, isVerified) VALUES (\"thaingo\", "
-                                        "\"thai123\", \"thaingo1202@outlook.com\", \"19:53 - 28/07/2023\", 0)";
+                                        "\"thai123\", \"thaingo1202@outlook.com\", \"19:53 - 28/07/2023\")";
         stmt->execute(insert_user_info);
 
         insert_user_info = "INSERT INTO user (username, password, email, signedUpAt, isVerified) VALUES (\"vanA\", "
-                                        "\"abc1\", \"vana@example.com\", \"22:37 - 28/07/2023\", 0)";
+                                        "\"abc1\", \"vana@example.com\", \"22:37 - 28/07/2023\")";
         stmt->execute(insert_user_info);
         
         delete stmt;

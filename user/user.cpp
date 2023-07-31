@@ -1,4 +1,4 @@
-#include "iostream"
+// #include "iostream"
 #include "mysql_connection.h"
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
@@ -18,8 +18,7 @@ class User
     string password;
     string email;
     string signedUpAt;
-    bool isVerified;
-
+    
     // ERRORS
     string errors[3] = {
         "",
@@ -33,6 +32,7 @@ public:
         username = "";
         password = "";
         email = "";
+        signedUpAt = "";
     }
     User(string username, string email, string password)
     {
@@ -40,24 +40,30 @@ public:
         this->email = email;
         this->password = password;
     }
+    User(User &u) {
+        userId = u.userId;
+        username  = u.username;
+        email = u.email;
+    }
     void printInfo();
     int isDataAvailable();
     void signUp();
     void logIn();
     void logOut();
     int isLoggedIn();
-    void updateAttrs(int, string, string, string);
+    void updateAttrs(int, string, string, string, string);
 };
 void User::printInfo()
 {
     cout << username << " " << email << endl;
 }
-void User::updateAttrs(int uid, string usr, string eml, string passwd)
+void User::updateAttrs(int uid, string usr, string eml, string passwd, string at)
 {
-    this->userId = uid;
-    this->username = usr;
-    this->email = eml;
-    this->password = passwd;
+    userId = uid;
+    username = usr;
+    email = eml;
+    password = passwd;
+    signedUpAt = at;
 }
 int User::isLoggedIn()
 {
@@ -65,7 +71,8 @@ int User::isLoggedIn()
 }
 void User::logOut()
 {
-    updateAttrs(-1, "", "", "");
+    updateAttrs(-1, "", "", "", "");
+    // delete this;
 }
 void User::logIn()
 {
@@ -86,7 +93,8 @@ void User::logIn()
             int uid = res->getInt("userId");
             string usr = res->getString("username");
             string eml = res->getString("email");
-            updateAttrs(uid, usr, eml, "");
+            string sgUpAt = res->getString("signedUpAt");
+            updateAttrs(uid, usr, eml, "", sgUpAt);
         }
         else
         {
@@ -106,10 +114,11 @@ void User::signUp()
     case 0:
         try
         {
-            pstmt = con->prepareStatement("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
+            pstmt = con->prepareStatement("INSERT INTO user (username, password, email, signedUpAt) VALUES (?, ?, ?, ?)");
             pstmt->setString(1, username);
             pstmt->setString(2, password);
             pstmt->setString(3, email);
+            pstmt->setString(4, signedUpAt);
 
             status = pstmt->executeUpdate();
             if (!status)
